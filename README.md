@@ -4,6 +4,8 @@ Event-Driven Microservices with Kafka and Choreography as the consistency patter
 
 ## Why
 
+This was a laboratory for the High-Potential Technical Booster hosted at EDEM and sponsored by Capgemini
+
 ### Source
 
 https://github.com/ccsw-csd/shop-cart-public
@@ -12,13 +14,39 @@ https://github.com/ccsw-csd/shop-cart-public
 
 https://github.com/ccsw-csd/shop-cart
 
+## Data Flow
+
+```mermaid
+flowchart LR;
+    Shop-Orders-->|OK|Stock;
+
+    Stock-->|KO|Shop-Orders;
+    Stock-->|OK|Payments;
+
+    Payments-->|KO|Stock;
+    Payments-->|OK|Shipments;
+
+    Shipments-->|KO|Payments;
+    Shipments-->|OK|Invoices;
+
+    Invoices-->|KO|Shipments;
+    Invoices-->|OK|Shop-Orders;
+
+    Shop-Orders-->|KO|Notifications;
+    Shop-Orders-->|OK|Notifications;
+
+    Notifications-->a("Send Notification");
+```
+
 ## Structure
 
-Crear dos carpetas, escritos y src (para todos los micros)
+- scripts, e2e testing
+- server, kafka and zookeeper, WIP
+- src, microservices
 
 ## Language Philosophy
 
-Para lo del laboratorio de la charla de microa usar los siguientes lenguajes, intentando evitar Java si es posible
+Trying not to default to Java, each microservice is written in a different language
 
 - Ruby -> shop_orders
 - C# -> stocks
@@ -29,8 +57,10 @@ Para lo del laboratorio de la charla de microa usar los siguientes lenguajes, in
 
 ## Testing
 
-Y archivos y jsons por vertical de e2e testing en su propio lenguaje
-Con un script para ejecutarlos todos
+Each microservice owns their own testing strategy.
+The payloads are defined in the microservice, as a json file
+
+There's a root script to execute every single e2e testing of each microservice in order
 
 ## Handlers
 
