@@ -1,23 +1,96 @@
-interface IServiceHandler
+namespace Stocks
 {
-    public ShopOrderRequest shopOrderRequest;
-    public void success();
-    public void fail();
-}
-
-class StocksHandler : IServiceHandler
-{
-    public ShopOrderRequest shopOrderRequest;
-
-    public void success()
+    interface IServiceHandler
     {
-
+        public ShopOrderRequest shopOrderRequest;
+        public void success();
+        public void fail();
+        public void process();
     }
 
-    public void fail()
+    class StocksHandler : IServiceHandler
     {
+        public ShopOrderRequest shopOrderRequest;
 
+        public void success()
+        {
+            shopOrderRequest.shopOrderRequestData.success = true;
+            throw new Exception("Not implemented");
+            // TODO: topic handler -> payments
+        }
+
+        private void rollback()
+        {
+            throw new Exception("Not implemented");
+        }
+
+        public void fail()
+        {
+            shopOrderRequest.shopOrderRequestData.success = false;
+
+            try
+            {
+                rollback();
+            }
+            finally
+            {
+                // TODO: handle error, retries?
+                // TODO: topic handler -> ship_orders
+            }
+        }
+
+        private bool doesProductExist(StockProduct product)
+        {
+            return product != null;
+        }
+
+        private bool productHasEnoughStock(StockProduct product)
+        {
+            return product.stock >= shopOrderRequest.shopOrderRequestData.quantity > 0;
+        }
+
+        private bool isValidProductOrder(StockProduct product)
+        {
+            return doesProductExist(product) && productHasEnoughStock()
+        }
+
+        private StockProduct getProduct()
+        {
+            throw new Exception("Not implemented");
+        }
+
+        private bool decrementStock(StockProduct product)
+        {
+            throw new Exception("Not implemented");
+            return true;
+        }
+
+        private bool processStock()
+        {
+            StockProduct product = getProduct()
+
+            if (!isValidProductOrder(product))
+            {
+                return false;
+            }
+
+            shopOrderRequest.shopOrderRequestData.price = product.price;
+            return decrementStock(product);
+        }
+
+        public void process()
+        {
+            if (!shopOrderRequest.success)
+            {
+                return fail();
+            }
+
+            if (processStock())
+            {
+                return success();
+            }
+
+            fail();
+        }
     }
-
-
 }

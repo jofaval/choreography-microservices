@@ -45,5 +45,5 @@ class ShopOrderRequest
     public $success;
 
     /** @var ShopOrderRequestData */
-    public $shopOrderRequestData;
+    public $shop_order_request_data;
 }

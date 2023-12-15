@@ -77,5 +77,9 @@ class ServiceHandler {
     public void fail() {
 
     }
+
+    public void process() {
+
+    }
 }
 ```

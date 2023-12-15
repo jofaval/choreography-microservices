@@ -20,4 +20,4 @@ class ShopOrderRequestData(BaseModel):
 class ShopOrderRequest(BaseModel):
     groupId: str
     success: bool
-    shopOrderRequestData: ShopOrderRequestData
+    shop_order_request_data: ShopOrderRequestData
