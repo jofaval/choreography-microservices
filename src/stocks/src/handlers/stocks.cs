@@ -39,7 +39,7 @@ namespace Stocks
             }
         }
 
-        private bool doesProductExist(StockProduct product)
+        private bool productExists(StockProduct product)
         {
             return product != null;
         }
@@ -51,7 +51,7 @@ namespace Stocks
 
         private bool isValidProductOrder(StockProduct product)
         {
-            return doesProductExist(product) && productHasEnoughStock()
+            return productExists(product) && productHasEnoughStock(product)
         }
 
         private StockProduct getProduct()
