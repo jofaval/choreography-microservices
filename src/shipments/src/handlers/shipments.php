@@ -19,7 +19,7 @@ class ShipmentsHandler implements ServiceHandler
         // TODO: topic handler -> invoices
     }
 
-    private function rollback()
+    private function compensate()
     {
         throw new Error("Not implemented");
     }
@@ -28,7 +28,7 @@ class ShipmentsHandler implements ServiceHandler
     {
         $this->shop_order_request->success = false;
         try {
-            $this->rollback();
+            $this->compensate();
         } finally {
             throw new Error("Not implemented");
             // TODO: handle error, retries?

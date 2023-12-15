@@ -19,7 +19,7 @@ namespace Stocks
             // TODO: topic handler -> payments
         }
 
-        private void rollback()
+        private void compensate()
         {
             throw new Exception("Not implemented");
         }
@@ -30,7 +30,7 @@ namespace Stocks
 
             try
             {
-                rollback();
+                compensate();
             }
             finally
             {

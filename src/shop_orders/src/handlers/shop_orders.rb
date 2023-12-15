@@ -17,7 +17,7 @@ class ShopOrdersHandler
         end
     end
 
-    def self.rollback()
+    def self.compensate()
         raise "Not implemented"
     end
 
@@ -25,7 +25,7 @@ class ShopOrdersHandler
         self.shop_order_request.success = false
 
         begin
-            self.rollback()
+            self.compensate()
         rescue => error
             # TODO: handle error, retries?
             # TODO: topic handler -> notifications
