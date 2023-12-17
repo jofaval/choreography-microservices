@@ -1,5 +1,8 @@
 namespace Stocks
 {
+    const PAYMENTS_TOPIC = "";
+    const SHOP_ORDERS_TOPIC = "";
+
     interface IServiceHandler
     {
         public ShopOrderRequest shopOrderRequest;
@@ -11,12 +14,18 @@ namespace Stocks
     class StocksHandler : IServiceHandler
     {
         public ShopOrderRequest shopOrderRequest;
+        private TopicHandler topicHandler;
+
+        public StocksHandler(ShopOrderRequest shopOrderRequest, TopicHandler topicHandler)
+        {
+            this.shopOrderRequest = shopOrderRequest;
+            this.topicHandler = topicHandler;
+        }
 
         public void success()
         {
             shopOrderRequest.shopOrderRequestData.success = true;
-            throw new Exception("Not implemented");
-            // TODO: topic handler -> payments
+            topicHandler.send(PAYMENTS_TOPIC, shopOrderRequest);
         }
 
         private void compensate()
@@ -35,7 +44,7 @@ namespace Stocks
             finally
             {
                 // TODO: handle error, retries?
-                // TODO: topic handler -> shop_orders
+                topicHandler.send(SHOP_ORDERS_TOPIC, shopOrderRequest);
             }
         }
 

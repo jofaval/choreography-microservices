@@ -23,7 +23,7 @@ func encode(payload any) {
 
 var producer = nil
 
-func Send(topicId string, payload any) {
+func Send(topic string, payload any) {
 	producer, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": KAFKA_BOOTSTRAP_SERVER,
 	})
@@ -35,7 +35,8 @@ func Send(topicId string, payload any) {
 	defer producer.Close()
 
 	producer.Produce(&kafka.Message{
-		Value: []byte(encode(payload)),
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Value:          []byte(encode(payload)),
 	}, nil)
 
 	producer.Flush(15 * 1000)
