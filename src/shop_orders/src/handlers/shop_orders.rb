@@ -1,9 +1,9 @@
 class ShopOrdersHandler
-    attr_reader :shop_order_request
-    attr_writer :shop_order_request
+    attr_reader :shopOrderRequest
+    attr_writer :shopOrderRequest
 
     def self.success(is_update)
-        self.shop_order_request.success = true
+        self.shopOrderRequest.success = true
         raise "Not implemented"
         
         begin
@@ -22,7 +22,7 @@ class ShopOrdersHandler
     end
 
     def self.failure()
-        self.shop_order_request.success = false
+        self.shopOrderRequest.success = false
 
         begin
             self.compensate()
@@ -41,12 +41,12 @@ class ShopOrdersHandler
         raise "Not implemented"
     end
 
-    def self.process_shop_order_request()
+    def self.process_shopOrderRequest()
         @uuid = self.generate_uuid()
 
-        self.shop_order_request.shop_order_request_data.uuid = @uuid
+        self.shopOrderRequest.shopOrderRequestData.uuid = @uuid
         raise "Not implemented: Get TEAM_ID from .env"
-        self.shop_order_request.groupId = TEAM_ID
+        self.shopOrderRequest.groupId = TEAM_ID
 
         self.place_order()
     end
@@ -61,11 +61,11 @@ class ShopOrdersHandler
     end
 
     def self.is_update()
-        return self.shop_order_request.shop_order_request_data.uuid != nil && self.shop_order_request.shop_order_request_data.uuid != ""
+        return self.shopOrderRequest.shopOrderRequestData.uuid != nil && self.shopOrderRequest.shopOrderRequestData.uuid != ""
     end
 
     def self.process()
-        if !@shop_order_request.success
+        if !@shopOrderRequest.success
             return self.failure()
         end
 
@@ -74,7 +74,7 @@ class ShopOrdersHandler
         if @is_update
             @success = self.process_shop_order_update()
         else
-            @success = self.process_shop_order_request()
+            @success = self.process_shopOrderRequest()
         end
 
         if @success

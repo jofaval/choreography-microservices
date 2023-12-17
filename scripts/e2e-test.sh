@@ -1,6 +1,6 @@
 cd ./src/
 
-cd ./ship_orders/
+cd ./shop_orders/
 sh ./scripts/e2e-test.sh
 cd ..
 

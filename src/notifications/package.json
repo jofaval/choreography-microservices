@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"kafkajs": "^2.2.4",
 		"typescript": "^5.3.3",
 		"vite": "^5.0.10",
 		"zod": "^3.22.4"

@@ -14,7 +14,7 @@ const shopOrderRequestDataValidator = z.object({
   invoice: z.string().optional(),
 });
 
-const shopOrderRequestValidator = z.object({
+export const shopOrderRequestValidator = z.object({
   groupId: z.string(),
   success: z.boolean(),
   shopOrderRequestData: shopOrderRequestDataValidator,

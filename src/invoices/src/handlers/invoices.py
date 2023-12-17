@@ -1,33 +1,50 @@
 from pydantic import BaseModel
-from src.models.shop_order_request import ShopOrderRequest
+from src.handlers.topic import TopicHandler
+from src.models.shopOrderRequest import ShopOrderRequest
 
 MAX_INVOICE_LEN = 60
+
+# TODO: use dotenv
+TEAM_ID = 3
+# TODO: use dotenv
+SHOP_ORDERS_TOPIC = ""
+# TODO: use dotenv
+STOCKS_TOPIC = ""
+# TODO: use dotenv
+PAYMENTS_TOPIC = ""
+# TODO: use dotenv
+SHIPMENTS_TOPIC = ""
+# TODO: use dotenv
+INVOICES_TOPIC = ""
+# TODO: use dotenv
+NOTIFICATIONS_TOPIC = ""
 
 
 class InvoicesHandler(BaseModel):
     """Invoices microservice handler"""
-    shop_order_request: ShopOrderRequest
+    shopOrderRequest: ShopOrderRequest
+    topic_handler: TopicHandler
 
     def success(self):
         """Success path"""
-        self.shop_order_request.success = True
-        # TODO: topic handler -> ship orders
+        self.shopOrderRequest.success = True
+        self.topic_handler.send(SHOP_ORDERS_TOPIC, self.shopOrderRequest)
 
     def fail(self):
         """Failure path"""
-        self.shop_order_request.success = False
-        # TODO: topic handler -> shipments
+        self.shopOrderRequest.success = False
+        self.topic_handler.send(SHIPMENTS_TOPIC, self.shopOrderRequest)
 
     def generate_invoice(self):
         """UUID + Customer + Product"""
-        data = self.shop_order_request.shop_order_request_data
+        data = self.shopOrderRequest.shopOrderRequestData
         invoice: str = data.uuid + data.customer + data.product
 
-        self.shop_order_request.shop_order_request_data.invoice = invoice
+        self.shopOrderRequest.shopOrderRequestData.invoice = invoice
 
     def is_valid_invoice(self):
         """Should not surpass the max amount"""
-        return len(self.shop_order_request.shop_order_request_data.invoice) <= MAX_INVOICE_LEN
+        return len(self.shopOrderRequest.shopOrderRequestData.invoice) <= MAX_INVOICE_LEN
 
     def process_invoice(self):
         """Actual invoice processing"""
@@ -36,7 +53,10 @@ class InvoicesHandler(BaseModel):
 
     def process(self):
         """Orchestrator"""
-        if not self.shop_order_request.success:
+        if self.shopOrderRequest.groupId != f"team-{TEAM_ID}":
+            return
+
+        if not self.shopOrderRequest.success:
             return self.fail()
 
         if self.process_invoice():

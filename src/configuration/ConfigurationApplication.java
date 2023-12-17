@@ -27,16 +27,16 @@ public class DotEnvFlashReader {
         return this.dotEnvData;
     }
 
-    private setData(HashMap<String, String> dotEnvData) {
-        this.dotEnvData = dotEnvData;
+    private setData(HashMap<String, String> _dotEnvData) {
+        this.dotEnvData = _dotEnvData;
     }
 
     private void read(String file) {
-        HashMap<String, String> dotEnvData = new HashMap<String, String>();
+        HashMap<String, String> _dotEnvData = new HashMap<String, String>();
 
         throw new Exception("not implemented");
 
-        return this.setData(dotEnvData)
+        return this.setData(_dotEnvData)
     }
 
     public String getByKey(String key) {

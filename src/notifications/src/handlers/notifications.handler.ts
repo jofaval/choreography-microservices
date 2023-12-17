@@ -14,6 +14,10 @@ const isValueEmpty = (value: unknown) => {
 export class NotificationsHandler implements ServiceHandler {
   shopOrderRequest: ShopOrderRequest;
 
+  constructor(shopOrderRequest: ShopOrderRequest) {
+    this.shopOrderRequest = shopOrderRequest;
+  }
+
   success() {
     console.log("Successful order", JSON.stringify(this.shopOrderRequest));
   }

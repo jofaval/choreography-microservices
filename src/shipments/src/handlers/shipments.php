@@ -1,5 +1,10 @@
 <?php
 
+// TODO: use dotenv
+define("INVOICES_TOPIC", "");
+// TODO: use dotenv
+define("PAYMENTS_TOPIC", "");
+
 interface ServiceHandler
 {
     public function success();
@@ -10,13 +15,23 @@ interface ServiceHandler
 class ShipmentsHandler implements ServiceHandler
 {
     /** @var ShopOrderRequest */
-    public $shop_order_request;
+    public $shopOrderRequest;
+
+    /** @var TopicHandler */
+    public $topic_handler;
+
+    public function __construct(
+        ShopOrderRequest $shopOrderRequest,
+        TopicHandler $topic_handler
+    ) {
+        $this->shopOrderRequest = $shopOrderRequest;
+        $this->topic_handler = $topic_handler;
+    }
 
     public function success(): void
     {
-        $this->shop_order_request->success = true;
-        throw new Error("Not implemented");
-        // TODO: topic handler -> invoices
+        $this->shopOrderRequest->success = true;
+        $this->topic_handler->send(INVOICES_TOPIC, $this->shopOrderRequest);
     }
 
     private function compensate()
@@ -26,13 +41,12 @@ class ShipmentsHandler implements ServiceHandler
 
     public function fail(): void
     {
-        $this->shop_order_request->success = false;
+        $this->shopOrderRequest->success = false;
         try {
             $this->compensate();
         } finally {
-            throw new Error("Not implemented");
             // TODO: handle error, retries?
-            // TODO: topic handler -> payments
+            $this->topic_handler->send(PAYMENTS_TOPIC, $this->shopOrderRequest);
         }
     }
 
@@ -40,10 +54,10 @@ class ShipmentsHandler implements ServiceHandler
     {
         $success = false;
         $data = [
-            "uuid" => $this->shop_order_request->shop_order_request_data->uuid,
-            "customer" => $this->shop_order_request->shop_order_request_data->customer,
-            "address" => $this->shop_order_request->shop_order_request_data->address,
-            "shipment" => $this->shop_order_request->shop_order_request_data->shipment,
+            "uuid" => $this->shopOrderRequest->shopOrderRequestData->uuid,
+            "customer" => $this->shopOrderRequest->shopOrderRequestData->customer,
+            "address" => $this->shopOrderRequest->shopOrderRequestData->address,
+            "shipment" => $this->shopOrderRequest->shopOrderRequestData->shipment,
         ];
         throw new Error("Not implemented");
 
@@ -52,18 +66,18 @@ class ShipmentsHandler implements ServiceHandler
 
     private function process_shipment()
     {
-        $address = $this->shop_order_request->shop_order_request_data->address;
+        $address = $this->shopOrderRequest->shopOrderRequestData->address;
         if (!isset($address) || empty($address)) {
             return false;
         }
 
-        $this->shop_order_request->shop_order_request_data->shipment = date("c");
+        $this->shopOrderRequest->shopOrderRequestData->shipment = date("c");
         return $this->ship();
     }
 
     public function process(): void
     {
-        if (!$this->shop_order_request->success) {
+        if (!$this->shopOrderRequest->success) {
             $this->fail();
             return;
         }

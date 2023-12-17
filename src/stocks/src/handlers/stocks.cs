@@ -35,7 +35,7 @@ namespace Stocks
             finally
             {
                 // TODO: handle error, retries?
-                // TODO: topic handler -> ship_orders
+                // TODO: topic handler -> shop_orders
             }
         }
 

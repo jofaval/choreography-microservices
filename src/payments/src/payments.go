@@ -1,5 +1,11 @@
 package src
 
+// TODO: use dotenv
+const (
+	STOCKS_TOPIC    = "stock"
+	SHIPMENTS_TOPIC = "shipment"
+)
+
 type PaymentEntry struct {
 	uuid     string
 	customer string
@@ -9,14 +15,12 @@ type PaymentEntry struct {
 
 func success(shopOrderRequest *ShopOrderRequest) {
 	shopOrderRequest.shopOrderRequestData.success = true
-	panic("Not implemented")
-	// TODO: topic handler -> shipments
+	Send(SHIPMENTS_TOPIC, shopOrderRequest)
 }
 
 func fail(shopOrderRequest *ShopOrderRequest) {
 	shopOrderRequest.shopOrderRequestData.success = false
-	panic("Not implemented")
-	// TODO: topic handler -> stocks
+	Send(STOCKS_TOPIC, shopOrderRequest)
 }
 
 func pay(shopOrderRequest *ShopOrderRequest) {
