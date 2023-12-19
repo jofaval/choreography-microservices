@@ -13,15 +13,13 @@ const (
 	PAYMENTS_TOPIC         = ""
 )
 
-func serialize(payload any) {
+func serialize(payload any) string {
 	return payload
 }
 
-func encode(payload any) {
+func encode(payload any) string {
 	return string(serialize(payload))
 }
-
-var producer = nil
 
 func Send(topic string, payload any) {
 	producer, err := kafka.NewProducer(&kafka.ConfigMap{
@@ -42,16 +40,16 @@ func Send(topic string, payload any) {
 	producer.Flush(15 * 1000)
 }
 
-func deserialize(raw any) {
-	// panic("Not implemented")
+func deserialize(raw any) *ShopOrderRequest {
+	panic("Not implemented")
 	return ""
 }
 
-func decode(message any) {
+func decode(message any) *ShopOrderRequest {
 	return deserialize(string(message))
 }
 
-func Read(topic string, onMessage func(payload any)) {
+func Read(topic string, onMessage func(payload *ShopOrderRequest)) {
 	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": KAFKA_BOOTSTRAP_SERVER,
 	})

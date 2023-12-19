@@ -1,9 +1,12 @@
 package src
 
+import "database/sql"
+
 // TODO: use dotenv
 const (
 	STOCKS_TOPIC    = "stock"
 	SHIPMENTS_TOPIC = "shipment"
+	PAYMENTS_TABLE  = "payments"
 )
 
 type PaymentEntry struct {
@@ -13,46 +16,51 @@ type PaymentEntry struct {
 	paid     float64
 }
 
-func success(shopOrderRequest *ShopOrderRequest) {
-	shopOrderRequest.shopOrderRequestData.success = true
+func success(conn *sql.DB, shopOrderRequest *ShopOrderRequest) {
+	shopOrderRequest.Success = true
 	Send(SHIPMENTS_TOPIC, shopOrderRequest)
 }
 
-func fail(shopOrderRequest *ShopOrderRequest) {
-	shopOrderRequest.shopOrderRequestData.success = false
+func compensate(conn *sql.DB, shopOrderRequest *ShopOrderRequest) {
+	panic("Not implemented")
+	del(conn)
+}
+
+func fail(conn *sql.DB, shopOrderRequest *ShopOrderRequest) {
+	shopOrderRequest.Success = false
+	compensate(conn, shopOrderRequest)
 	Send(STOCKS_TOPIC, shopOrderRequest)
 }
 
-func pay(shopOrderRequest *ShopOrderRequest) {
-	data := PaymentEntry{
-		uuid:     shopOrderRequest.shopOrderRequestData.uuid,
-		customer: shopOrderRequest.shopOrderRequestData.customer,
-		credit:   shopOrderRequest.shopOrderRequestData.credit,
-		paid:     shopOrderRequest.shopOrderRequestData.paid,
-	}
-	panic("Not implemented")
+func pay(conn *sql.DB, shopOrderRequest *ShopOrderRequest) {
+	insert(conn, PAYMENTS_TABLE, PaymentEntry{
+		uuid:     shopOrderRequest.ShopOrderRequestData.Uuid,
+		customer: shopOrderRequest.ShopOrderRequestData.Customer,
+		credit:   shopOrderRequest.ShopOrderRequestData.Credit,
+		paid:     shopOrderRequest.ShopOrderRequestData.Paid,
+	})
 }
 
-func processPayment(shopOrderRequest *ShopOrderRequest) bool {
-	if shopOrderRequest.shopOrderRequestData.credit == "" {
+func processPayment(conn *sql.DB, shopOrderRequest *ShopOrderRequest) bool {
+	if shopOrderRequest.ShopOrderRequestData.Credit == "" {
 		return false
 	}
 
-	shopOrderRequest.shopOrderRequestData.paid = shopOrderRequest.shopOrderRequestData.price * float64(shopOrderRequest.shopOrderRequestData.quantity)
+	shopOrderRequest.ShopOrderRequestData.Paid = shopOrderRequest.ShopOrderRequestData.Price * float64(shopOrderRequest.ShopOrderRequestData.Quantity)
 
 	return true
 }
 
-func Process(shopOrderRequest *ShopOrderRequest) {
-	if !shopOrderRequest.success {
-		fail(shopOrderRequest)
+func Process(conn *sql.DB, shopOrderRequest *ShopOrderRequest) {
+	if !shopOrderRequest.Success {
+		fail(conn, shopOrderRequest)
 		return
 	}
 
-	if processPayment(shopOrderRequest) {
-		success(shopOrderRequest)
+	if processPayment(conn, shopOrderRequest) {
+		success(conn, shopOrderRequest)
 		return
 	}
 
-	fail(shopOrderRequest)
+	fail(conn, shopOrderRequest)
 }

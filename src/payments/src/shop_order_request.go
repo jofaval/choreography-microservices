@@ -1,21 +1,21 @@
 package src
 
 type shopOrderRequestData struct {
-	uuid     string
-	customer string
-	email    string
-	address  string
-	credit   string
-	product  string
-	quantity int
-	price    float64
-	paid     float64
-	shipment string
-	invoice  string
+	Uuid     string
+	Customer string
+	Email    string
+	Address  string
+	Credit   string
+	Product  string
+	Quantity int
+	Price    float64
+	Paid     float64
+	Shipment string
+	Invoice  string
 }
 
 type ShopOrderRequest struct {
-	groupId              string
-	success              bool
-	shopOrderRequestData shopOrderRequestData
+	GroupId              string
+	Success              bool
+	ShopOrderRequestData shopOrderRequestData
 }

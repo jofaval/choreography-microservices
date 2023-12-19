@@ -1,5 +1,9 @@
 package main
 
+import (
+	"capgemini.com/payments/src"
+)
+
 // TODO: use dotenv
 const (
 	PAYMENTS_TOPIC = ""
@@ -7,11 +11,13 @@ const (
 )
 
 func main() {
-	Read(PAYMENTS_TOPIC, func(payload ShopOrderRequest) {
-		if payload.groupId != "team-"+string(TEAM_ID) {
+	conn := src.Connect()
+
+	src.Read(PAYMENTS_TOPIC, func(payload *src.ShopOrderRequest) {
+		if payload.GroupId != "team-"+string(TEAM_ID) {
 			return
 		}
 
-		Process(payload)
+		src.Process(conn, payload)
 	})
 }
