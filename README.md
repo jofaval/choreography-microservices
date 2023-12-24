@@ -18,24 +18,24 @@ https://github.com/ccsw-csd/shop-cart
 
 ```mermaid
 flowchart LR;
-    Shop-Orders-->|OK|Stock;
+    shop_order[Shop Orders]-->|OK|stock[Stock];
 
-    Stock-->|KO|Shop-Orders;
-    Stock-->|OK|Payments;
+    stock-->|KO|shop_order;
+    stock-->|OK|payment[Payments];
 
-    Payments-->|KO|Stock;
-    Payments-->|OK|Shipments;
+    payment-->|KO|stock;
+    payment-->|OK|shipment[Shipments];
 
-    Shipments-->|KO|Payments;
-    Shipments-->|OK|Invoices;
+    shipment-->|KO|payment;
+    shipment-->|OK|invoice[Invoices];
 
-    Invoices-->|KO|Shipments;
-    Invoices-->|OK|Shop-Orders;
+    invoice-->|KO|shipment;
+    invoice-->|OK|shop_order;
 
-    Shop-Orders-->|KO|Notifications;
-    Shop-Orders-->|OK|Notifications;
+    shop_order-->|KO|notification[Notifications];
+    shop_order-->|OK|notification;
 
-    Notifications-->a("Send Notification");
+    notification-->a("Send Notification");
 ```
 
 ## Structure
